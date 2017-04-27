@@ -185,6 +185,13 @@ static void win_redr_ruler(win_T *wp, int always);
 static int screen_char_attr = 0;
 #endif
 
+#ifdef FEAT_SPECIAL_LINE_NR
+int line_number_is_left_hand(win_T *wp, linenr_T lnum);
+int line_number_is_top(win_T *wp, linenr_T lnum);
+int line_number_is_bottom(win_T *wp, linenr_T lnum);
+int line_number_is_middle(win_T *wp, linenr_T lnum);
+#endif
+
 /*
  * Redraw the current window later, with update_screen(type).
  * Set must_redraw only if not already set to a higher value.
@@ -3731,6 +3738,7 @@ win_line(
 				num = lnum;
 				fmt = "%-*ld ";
 			    }
+
 			}
 
 			sprintf((char *)extra, fmt,
@@ -3757,6 +3765,18 @@ win_line(
 		    if ((wp->w_p_cul || wp->w_p_rnu)
 						 && lnum == wp->w_cursor.lnum)
 			char_attr = hl_attr(HLF_CLN);
+#ifdef FEAT_SPECIAL_LINE_NR
+                    if (wp->w_p_rnu) {
+                        if (line_number_is_left_hand(wp, lnum)) {
+                            char_attr = hl_attr(HLF_LHLN);
+                        }
+                        if (line_number_is_top(wp, lnum) || \
+                                line_number_is_bottom(wp, lnum) || \
+                                line_number_is_middle(wp, lnum)) {
+                            char_attr = hl_attr(HLF_SLN);
+                        }
+                    }
+#endif
 #endif
 		}
 	    }
@@ -10858,4 +10878,100 @@ screen_screencol(void)
 screen_screenrow(void)
 {
     return screen_cur_row;
+}
+
+/* 
+ * Return true when the line number can be composed of just the numbers 1-4
+ */
+    int
+line_number_is_left_hand(win_T *wp, linenr_T lnum)
+{
+    long   i;
+    long   num;
+
+    num = labs((long)get_cursor_rel_lnum(wp, lnum));
+    for (i=4;i > 0; i--){
+        if((num - i) % 10 == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* 
+ * Return true when the line number is the top line of the file 
+ */
+    int
+line_number_is_top(win_T *wp, linenr_T lnum)
+{
+    linenr_T top;
+
+    top = wp->w_topline;
+    int n = 0; 
+    while (top > 1 && n < p_so) {
+#ifdef FEAT_FOLDING
+        (void)hasFolding(top, NULL, &top);
+#endif
+        top++;
+        n++;
+    }
+    if (top == lnum) {
+        return 1;
+    }
+    return 0;
+}
+
+/* 
+ * Return true when the line number is the bottom line of the file 
+ */
+    int
+line_number_is_bottom(win_T *wp, linenr_T lnum)
+{
+    linenr_T bottom;
+
+    bottom = wp->w_botline - 1;
+    int n = 0; 
+    while (n < p_so) {
+#ifdef FEAT_FOLDING
+        (void)hasFolding(bottom, &bottom, NULL);
+#endif
+        bottom--;
+        n++;
+    }
+    if (bottom == lnum) {
+        return 1;
+    }
+    return 0;
+}
+
+/* 
+ * Return true when the line number is the bottom line of the file 
+ */
+    int
+line_number_is_middle(win_T *wp, linenr_T lnum)
+{
+    long        screen_middle;
+    linenr_T    middle;
+    long        current;
+
+    screen_middle = (wp->w_height / 2) + 1;
+    current = 1;
+    middle = wp->w_topline;
+
+    while (current <= screen_middle)
+    {
+#ifdef FEAT_FOLDING
+        if (hasAnyFolding(wp))
+        {
+            (void)hasFoldingWin(wp, middle, NULL, &middle, TRUE, NULL);
+        }
+#endif
+        middle++;
+        current++;
+    }
+
+    if (middle == lnum+1) {
+        return 1;
+    }
+    return 0;
 }

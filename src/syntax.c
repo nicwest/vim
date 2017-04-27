@@ -6891,6 +6891,8 @@ static char *(highlight_init_light[]) =
 	     "CursorLine term=underline cterm=underline guibg=Grey90"),
 	CENT("ColorColumn term=reverse ctermbg=LightRed",
 	     "ColorColumn term=reverse ctermbg=LightRed guibg=LightRed"),
+	CENT("ColorColumn term=reverse ctermbg=LightRed",
+	     "ColorColumn term=reverse ctermbg=LightRed guibg=LightRed"),
 #endif
 #ifdef FEAT_CONCEAL
 	CENT("Conceal ctermbg=DarkGrey ctermfg=LightGrey",
@@ -6902,6 +6904,12 @@ static char *(highlight_init_light[]) =
 #endif
 #ifdef FEAT_GUI
 	"Normal gui=NONE",
+#endif
+#ifdef FEAT_SPECIAL_LINE_NR
+	CENT("LeftHandLineNr term=bold cterm=bold gui=bold ctermfg=DarkBlue",
+	     "LeftHandLineNr term=bold cterm=bold gui=bold ctermfg=DarkBlue guifg=Blue"),
+	CENT("SpecialLineNr term=bold cterm=bold gui=bold ctermfg=DarkRed",
+	     "SpecialLineNr term=bold cterm=bold gui=bold ctermfg=DarkRed guifg=Red"),
 #endif
 	NULL
     };
@@ -6990,6 +6998,12 @@ static char *(highlight_init_dark[]) =
 #endif
 #ifdef FEAT_GUI
 	"Normal gui=NONE",
+#endif
+#ifdef FEAT_SPECIAL_LINE_NR
+	CENT("LeftHandLineNr term=bold cterm=bold gui=bold ctermfg=LightCyan",
+	     "LeftHandLineNr term=bold cterm=bold gui=bold ctermfg=LightCyan guifg=Cyan"),
+	CENT("SpecialLineNr term=bold cterm=bold gui=bold ctermfg=LightRed",
+	     "SpecialLineNr term=bold cterm=bold gui=bold ctermfg=LightRed guifg=Red"),
 #endif
 	NULL
     };

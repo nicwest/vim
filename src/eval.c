@@ -14208,6 +14208,9 @@ f_has(typval_T *argvars, typval_T *rettv)
 #ifdef FEAT_SMARTINDENT
 	"smartindent",
 #endif
+#ifdef FEAT_SPECIAL_LINE_NR
+	"speciallinenr",
+#endif
 #ifdef STARTUPTIME
 	"startuptime",
 #endif

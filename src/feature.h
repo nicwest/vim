@@ -819,6 +819,13 @@
 #endif
 
 /*
+ * +speciallineno
+ */
+#ifdef FEAT_NORMAL
+# define FEAT_SPECIAL_LINE_NR
+#endif
+
+/*
  * +termguicolors	'termguicolors' option.
  */
 #if (defined(FEAT_BIG) && defined(FEAT_SYN_HL)) && !defined(ALWAYS_USE_GUI)

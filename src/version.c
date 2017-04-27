@@ -559,6 +559,11 @@ static char *(features[]) =
 #else
 	"-smartindent",
 #endif
+#ifdef FEAT_SPECIAL_LINE_NR
+	"+speciallinenr",
+#else
+	"-speciallinenr",
+#endif
 #ifdef STARTUPTIME
 	"+startuptime",
 #else
